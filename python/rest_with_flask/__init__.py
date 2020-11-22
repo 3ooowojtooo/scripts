@@ -21,7 +21,7 @@ def index():
 #
 # @app.route('/list/')
 # def page():
-    return render_template('page.html', page=page)
+#    return render_template('page.html', page=page)
 
 
 if __name__ == '__main__':
