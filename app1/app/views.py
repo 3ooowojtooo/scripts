@@ -13,7 +13,8 @@ def addProduct(request):
     if request.method == 'POST':
         formular = ProductForm(request.POST)
         if formular.is_valid():
-            # add to db
+            product = Product(name=request.POST['name'])
+            product.save()
             return render(request, 'productadded.html')
     else:
         formular = ProductForm()
