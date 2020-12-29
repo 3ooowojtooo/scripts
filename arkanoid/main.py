@@ -7,5 +7,5 @@ def run():
 
 
 if __name__ == '__main__':
-    pygame.font.init()
+    pygame.init()
     run()
