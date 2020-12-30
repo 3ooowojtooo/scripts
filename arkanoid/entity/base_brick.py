@@ -29,3 +29,6 @@ class Brick(Entity):
             self.resource = YELLOW_BRICK_RESOURCE
         elif self.strength == 1:
             self.resource = GREEN_BRICK_RESOURCE
+
+    def get_score(self):
+        return self.strength

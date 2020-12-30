@@ -23,3 +23,9 @@ class Entity:
     def draw(self, window):
         if self.visible:
             window.blit(self.resource, (self.x, self.y))
+
+    def get_width(self):
+        return self.resource.get_width()
+
+    def get_height(self):
+        return self.resource.get_height()

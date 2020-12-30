@@ -4,8 +4,8 @@ from constants import *
 
 pygame.font.init()
 
-PADDLE_RESOURCE = pygame.image.load(os.path.join("assets", "paddle.png"))
-BALL_RESOURCE = pygame.image.load(os.path.join("assets", "ball.png"))
+PADDLE_RESOURCE = pygame.transform.scale(pygame.image.load(os.path.join("assets", "paddle.png")), (PADDLE_WIDTH, PADDLE_HIGH))
+BALL_RESOURCE = pygame.transform.scale(pygame.image.load(os.path.join("assets", "ball.png")), (BALL_WIDTH, BALL_HEIGHT))
 RED_BRICK_RESOURCE = pygame.transform.scale(pygame.image.load(os.path.join("assets", "red_brick.png")), (BRICK_WIDTH, BRICK_HEIGHT))
 YELLOW_BRICK_RESOURCE = pygame.transform.scale(pygame.image.load(os.path.join("assets", "yellow_brick.png")), (BRICK_WIDTH, BRICK_HEIGHT))
 GREEN_BRICK_RESOURCE = pygame.transform.scale(pygame.image.load(os.path.join("assets", "green_brick.png")), (BRICK_WIDTH, BRICK_HEIGHT))

@@ -12,3 +12,6 @@ class BlueBrick(Brick):
 
     def change_resource(self):
         pass
+
+    def get_score(self):
+        return 0
