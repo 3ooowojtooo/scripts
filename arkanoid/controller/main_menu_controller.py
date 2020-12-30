@@ -7,11 +7,16 @@ class MainMenuController(Controller):
     def __init__(self, window, start_game_callback, exit_callback):
         super().__init__(window)
         self.selected_item = 0
-        self.item_max_index = 1
         self.start_game_label = None
         self.exit_label = None
+        self.item_max_index = 1
         self.start_game_callback = start_game_callback
         self.exit_callback = exit_callback
+
+    def restart(self):
+        self.start_game_label = None
+        self.exit_label = None
+        self.selected_item = 0
 
     def handle_keys(self, keys):
         if keys[pygame.K_UP] and self.selected_item > 0:

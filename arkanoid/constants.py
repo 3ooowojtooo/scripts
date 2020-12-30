@@ -2,6 +2,7 @@
 FPS = 60
 WIDTH = 750
 HEIGHT = 750
+INITIAL_LIVES = 5
 
 # main menu
 LOGO_WIDTH = 375

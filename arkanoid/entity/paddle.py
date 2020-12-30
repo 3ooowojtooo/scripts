@@ -7,7 +7,9 @@ from constants import WIDTH
 class Paddle(Entity):
 
     def __init__(self, initial_position_x, initial_position_y, horizontal_velocity):
-        super().__init__(initial_position_x, initial_position_y, PADDLE_RESOURCE)
+        super().__init__(initial_position_x, initial_position_y, PADDLE_RESOURCE, True)
+        self.initial_position_x = initial_position_x
+        self.initial_position_y = initial_position_y
         self.horizontal_velocity = horizontal_velocity
 
     def handle_keys(self, keys):

@@ -7,7 +7,11 @@ class GameController(Controller):
     def __init__(self, window):
         super().__init__(window)
         self.paddle = Paddle(PADDLE_INITIAL_X_POSITION, PADDLE_INITIAL_Y_POSITION, PADDLE_HORIZONTAL_VELOCITY)
-        self.lives = 5
+        self.lives = INITIAL_LIVES
+
+    def restart(self):
+        self.lives = INITIAL_LIVES
+        self.paddle.restart()
 
     def handle_keys(self, keys):
         self.paddle.handle_keys(keys)
