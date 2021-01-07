@@ -19,8 +19,7 @@ class Brick(Entity):
             self.change_resource()
         if self.strength == 0:
             self.visible = False
-            return True
-        return False
+        return 1
 
     def change_resource(self):
         if self.strength == 3:

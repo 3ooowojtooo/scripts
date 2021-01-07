@@ -29,3 +29,17 @@ class Entity:
 
     def get_height(self):
         return self.resource.get_height()
+
+    def collide(self, obj):
+        offset_x = int(obj.x - self.x)
+        offset_y = int(obj.y - self.y)
+        overlap_offset_point = self.mask.overlap(obj.mask, (offset_x, offset_y))
+        if overlap_offset_point is not None:
+            return self.x + overlap_offset_point[0], self.y + overlap_offset_point[1]
+        return None
+
+    def contains_point(self, point):
+        x, y = point[0], point[1]
+        contains_x = x >= self.x and x <= (self.x + self.get_width())
+        contains_y = y >= self.y and y <= (self.y + self.get_height())
+        return contains_x and contains_y

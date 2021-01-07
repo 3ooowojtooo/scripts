@@ -9,6 +9,10 @@ class Level:
         for brick in self.bricks:
             brick.draw(window)
 
+    def restart(self):
+        for brick in self.bricks:
+            brick.restart()
+
 def compute_max_score(bricks):
     max_score = 0
     for brick in bricks:

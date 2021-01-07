@@ -20,7 +20,9 @@ def build_levels():
 
 
 def list_level_files():
-    return listdir(LEVELS_DIRECTORY_PATH)
+    level_files = listdir(LEVELS_DIRECTORY_PATH)
+    level_files.sort()
+    return level_files
 
 
 def build_level(file_path, level_number):
@@ -43,7 +45,9 @@ def build_bricks_for_line(line, line_number):
     bricks = []
     for i in range(len(line)):
         character = line[i]
-        bricks.append(build_brick(character, i, line_number))
+        brick = build_brick(character, i, line_number)
+        if brick is not None:
+            bricks.append(brick)
         i += 1
     return bricks
 
@@ -59,3 +63,5 @@ def build_brick(character, number_in_line, line_number):
         return YellowBrick(brick_x, brick_y)
     elif character == '3':
         return RedBrick(brick_x, brick_y)
+    else:
+        return None

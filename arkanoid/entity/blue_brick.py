@@ -8,7 +8,7 @@ class BlueBrick(Brick):
         super().__init__(initial_position_x, initial_position_y, BLUE_BRICK_RESOURCE, None)
 
     def hit(self):
-        pass
+        return 0
 
     def change_resource(self):
         pass

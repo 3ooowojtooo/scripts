@@ -15,3 +15,9 @@ LOGO_RESOURCE = pygame.transform.scale(pygame.image.load(os.path.join("assets", 
 
 MENU_ITEM_FONT = pygame.font.SysFont("arial", 25)
 MENU_ITEM_FONT_SELECTED = pygame.font.SysFont("arial", 25, True, False)
+GAME_LABELS_FONT = pygame.font.SysFont("arial", 20)
+PAUSE_MENU_TITLE_FONT = pygame.font.SysFont("arial", 30, True, False)
+WIN_TITLE_FONT = pygame.font.SysFont("arial", 30, True, False)
+WIN_LABEL_FONT = pygame.font.SysFont("arial", 25)
+LOSE_TITLE_FONT = pygame.font.SysFont("arial", 30, True, False)
+LOSE_LABEL_FONT = pygame.font.SysFont("arial", 25)
