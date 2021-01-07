@@ -40,7 +40,7 @@ class GameController(Controller):
         for level in self.levels:
             level.restart()
 
-    def handle_keys(self, keys):
+    def handle_keys(self, keys, enter_keydown):
         self.paddle.handle_keys(keys)
         if not self.ball_moving:
             self.ball.move_to(self.paddle.x + self.paddle.get_width() / 2 - self.ball.get_width() / 2, self.paddle.y - self.ball.get_height())

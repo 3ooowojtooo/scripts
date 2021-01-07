@@ -64,21 +64,25 @@ class Game:
         self.clock.tick(FPS)
 
     def handle_keys(self):
+        enter_keydown = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                enter_keydown = True
 
         keys = pygame.key.get_pressed()
+
         if self.gameStatus == GameStatus.MAIN_MENU:
-            self.mainMenuController.handle_keys(keys)
+            self.mainMenuController.handle_keys(keys, enter_keydown)
         elif self.gameStatus == GameStatus.RUNNING:
-            self.gameController.handle_keys(keys)
+            self.gameController.handle_keys(keys, enter_keydown)
         elif self.gameStatus == GameStatus.PAUSE:
-            self.pauseMenuController.handle_keys(keys)
+            self.pauseMenuController.handle_keys(keys, enter_keydown)
         elif self.gameStatus == GameStatus.LOSE:
-            self.loseController.handle_keys(keys)
+            self.loseController.handle_keys(keys, enter_keydown)
         elif self.gameStatus == GameStatus.WIN:
-            self.winController.handle_keys(keys)
+            self.winController.handle_keys(keys, enter_keydown)
 
     def redraw(self):
         self.window.blit(BACKGROUND_RESOURCE, (0, 0))

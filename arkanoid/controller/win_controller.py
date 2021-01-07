@@ -23,8 +23,8 @@ class WinController(Controller):
     def set_points(self, points):
         self.points_scored = points
 
-    def handle_keys(self, keys):
-        if keys[pygame.K_RETURN]:
+    def handle_keys(self, keys, enter_keydown):
+        if enter_keydown:
             self.continue_callback()
 
     def draw(self):

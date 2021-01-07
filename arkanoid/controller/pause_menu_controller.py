@@ -22,12 +22,12 @@ class PauseMenuController(Controller):
         self.resume_label = None
         self.exit_label = None
 
-    def handle_keys(self, keys):
+    def handle_keys(self, keys, enter_keydown):
         if keys[pygame.K_UP] and self.selected_item > 0:
             self.selected_item -= 1
         if keys[pygame.K_DOWN] and self.selected_item < self.item_max_index:
             self.selected_item += 1
-        if keys[pygame.K_RETURN]:
+        if enter_keydown:
             if self.selected_item == 0:
                 self.resume_game_callback()
             elif self.selected_item == 1:
