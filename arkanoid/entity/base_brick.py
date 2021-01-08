@@ -31,3 +31,30 @@ class Brick(Entity):
 
     def get_score(self):
         return self.strength
+
+    def get_collision_rectangle(self, ball_x_velocity, ball_y_velocity):
+        left = self.x + abs(ball_x_velocity)
+        right = self.x + self.get_width() - abs(ball_x_velocity)
+        top = self.y + abs(ball_y_velocity)
+        bottom = self.y + self.get_height() - abs(ball_y_velocity)
+        return left, right, top, bottom
+
+    def left_collision(self, collision_point, ball_x_velocity, ball_y_velocity):
+        left, _, _, _ = self.get_collision_rectangle(ball_x_velocity, ball_y_velocity)
+        x, _ = collision_point
+        return x <= left and ball_x_velocity > 0
+
+    def right_collision(self, collision_point, ball_x_velocity, ball_y_velocity):
+        _, right, _, _ = self.get_collision_rectangle(ball_x_velocity, ball_y_velocity)
+        x, _ = collision_point
+        return x >= right and ball_x_velocity < 0
+
+    def top_collision(self, collision_point, ball_x_velocity, ball_y_velocity):
+        _, _, top, _ = self.get_collision_rectangle(ball_x_velocity, ball_y_velocity)
+        _, y = collision_point
+        return y <= top and ball_y_velocity > 0
+
+    def bottom_collision(self, collision_point, ball_x_velocity, ball_y_velocity):
+        _, _, _, bottom = self.get_collision_rectangle(ball_x_velocity, ball_y_velocity)
+        _, y = collision_point
+        return y >= bottom and ball_y_velocity < 0
