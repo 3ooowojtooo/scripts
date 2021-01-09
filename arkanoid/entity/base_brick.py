@@ -1,5 +1,6 @@
 from entity.base_entity import Entity
 from assets import *
+from constants import COLLISION_OFFSET_BOUNDARY
 
 
 class Brick(Entity):
@@ -33,10 +34,10 @@ class Brick(Entity):
         return self.strength
 
     def get_collision_rectangle(self, ball_x_velocity, ball_y_velocity):
-        left = self.x + abs(ball_x_velocity)
-        right = self.x + self.get_width() - abs(ball_x_velocity)
-        top = self.y + abs(ball_y_velocity)
-        bottom = self.y + self.get_height() - abs(ball_y_velocity)
+        left = self.x + COLLISION_OFFSET_BOUNDARY
+        right = self.x + self.get_width() - COLLISION_OFFSET_BOUNDARY
+        top = self.y + COLLISION_OFFSET_BOUNDARY
+        bottom = self.y - COLLISION_OFFSET_BOUNDARY
         return left, right, top, bottom
 
     def left_collision(self, collision_point, ball_x_velocity, ball_y_velocity):
