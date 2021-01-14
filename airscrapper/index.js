@@ -1,6 +1,8 @@
 const express = require("express")
 const mongoose = require("mongoose")
 const routes = require("./routes")
+const browser = require("./browser")
+const scraperController = require('./pageController');
 
 const DB_URL = "mongodb://127.0.0.1:27017"
 
@@ -11,5 +13,7 @@ mongoose.connect(DB_URL, {useNewUrlParser : true, useUnifiedTopology : true})
     app.use("/api", routes)
     app.listen(5000, () => {
         console.log("Running")
+        let browserPromise = browser.startBrowser();
+        scraperController(browserPromise)
     })
 })
