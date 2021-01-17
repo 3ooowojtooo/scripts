@@ -1,4 +1,5 @@
 const Connection = require('../model/Connection')
+const timeUtils = require('../utils/timeUtils')
 
 function mapToConnections(connectionsData) {
     return connectionsData.map(mapToConnection)
@@ -12,11 +13,11 @@ function mapToConnection(connection) {
         toCity: connection.toCity,
         toCountry: connection.toCountry,
         arrivalTime: connection.arrivalTime,
-        arrivalTimeSort: timeStringToMinutes(connection.arrivalTime),
+        arrivalTimeSort: timeUtils.timeStringToMinutes(connection.arrivalTime),
         departureTime: connection.departureTime,
-        departureTimeSort: timeStringToMinutes(connection.departureTime),
+        departureTimeSort: timeUtils.timeStringToMinutes(connection.departureTime),
         durationSort: parseInt(connection.durationMinutes),
-        duration: minutesToDurationString(connection.durationMinutes),
+        duration: timeUtils.minutesToDurationString(connection.durationMinutes),
         airline: connection.airline,
         monday: availableDays[0],
         tuesday: availableDays[1],
@@ -31,35 +32,30 @@ function mapToConnection(connection) {
 function mapAvailableDays(availabilityString) {
     let daysAvailability = [false, false, false, false, false, false, false]
     for (let i = 0; i < 7; i++) {
-        if (availabilityString.includes((i+1).toString())) {
+        if (availabilityString.includes((i + 1).toString())) {
             daysAvailability[i] = true
         }
     }
     return daysAvailability
 }
 
-function timeStringToMinutes(timeString) {
-    const hour = timeString.substr(0, 2)
-    const minute = timeString.substr(3, 2)
-    let hourValue, minuteValue;
-    if (hour.startsWith("0")) {
-        hourValue = parseInt(hour.charAt(1))
-    } else {
-        hourValue = parseInt(hour)
-    }
-    if (minute.startsWith("0")) {
-        minuteValue = parseInt(minute.charAt(1))
-    } else {
-        minuteValue = parseInt(minute)
-    }
-    return hourValue * 60 + minuteValue
+function mapToResponse(connectionModels) {
+    return connectionModels.map(mapToResponseEntity)
 }
 
-function minutesToDurationString(minutes) {
-    const minutesValue = parseInt(minutes)
-    const hour = Math.floor(minutesValue / 60)
-    const minute = minutesValue % 60
-    return hour + "h " + minute + "m"
+function mapToResponseEntity(connection) {
+    return {
+        fromCity: connection.fromCity,
+        fromCountry: connection.fromCountry,
+        toCity: connection.toCity,
+        toCountry: connection.toCountry,
+        airline: connection.airline,
+        departureTime: connection.departureTime,
+        arrivalTime: connection.arrivalTime,
+        duration: connection.duration
+    }
 }
 
-module.exports = mapToConnections
+module.exports = {
+    mapToConnections, mapToResponse
+}
