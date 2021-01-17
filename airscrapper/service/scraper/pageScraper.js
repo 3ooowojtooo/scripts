@@ -5,8 +5,7 @@ const scraperObject = {
         console.log(`Navigating to ${this.url}`)
         await page.goto(this.url)
         await page.waitForSelector(".content > section.schedules > div.schedules > div.schedules-direct > div.schedules-table > div.schedules-body > ul")
-        console.log("Xd")
-        let a = await page.$$eval(".content > section.schedules > div.schedules > div.schedules-direct > div.schedules-table > div.schedules-body > ul", elements => {
+        return await page.$$eval(".content > section.schedules > div.schedules > div.schedules-direct > div.schedules-table > div.schedules-body > ul", elements => {
             return elements.map(el => {
                 const fromCity = el.getAttribute("data-departure-name")
                 const fromCountry = el.getAttribute("data-departure-country-name")
@@ -31,7 +30,6 @@ const scraperObject = {
                 }
             })
         })
-        console.log(a[0])
     }
 }
 
