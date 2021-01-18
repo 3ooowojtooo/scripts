@@ -52,7 +52,14 @@ function mapToResponseEntity(connection) {
         airline: connection.airline,
         departureTime: connection.departureTime,
         arrivalTime: connection.arrivalTime,
-        duration: connection.duration
+        duration: connection.duration,
+        monday: connection.monday,
+        tuesday: connection.tuesday,
+        wednesday: connection.wednesday,
+        thursday: connection.thursday,
+        friday: connection.friday,
+        saturday: connection.saturday,
+        sunday: connection.sunday
     }
 }
 

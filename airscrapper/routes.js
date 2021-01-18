@@ -2,10 +2,10 @@ const express = require("express")
 const router = express.Router()
 const connectionService = require('./service/connection/connectionService')
 
-router.put("/connections", async (req, res) => {
-    await connectionService.renewConnections("Poland", "Warsaw", "United Kingdom", "London")
-    res.sendStatus(200)
-})
+// router.put("/connections", async (req, res) => {
+//     await connectionService.renewConnections("Poland", "Warsaw", "United Kingdom", "London")
+//     res.sendStatus(200)
+// })
 
 router.get("/connections", async (req, res) => {
     try {

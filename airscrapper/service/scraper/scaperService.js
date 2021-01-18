@@ -10,13 +10,8 @@ async function setBrowserPromise(browserPromise) {
     }
 }
 
-async function scrapeAll(){
-    try{
-        return await pageScraper.scraper(browser);
-    } catch (err) {
-        console.log("Could not scrape objects")
-        throw err
-    }
+async function scrapeAll(url) {
+    return await pageScraper(browser, url)
 }
 
 module.exports = {

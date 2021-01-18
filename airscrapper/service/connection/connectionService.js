@@ -3,50 +3,22 @@ const Update = require('../../model/Update')
 const scraper = require('../scraper/scaperService')
 const connectionsMapper = require('../../mapper/connectionMapper')
 const timeUtils = require('../../utils/timeUtils')
+const fetch = require("node-fetch")
 
 const DATA_TTL_MILLISECONDS = 60 * 60 * 1000 // 1 hour
-
-async function renewConnections(fromCountry, fromCity, toCountry, toCity) {
-    await Connection.deleteMany({
-        fromCountry: fromCountry,
-        fromCity: fromCity,
-        toCountry: toCountry,
-        toCity: toCity
-    }).exec()
-    console.log("Connections deleted")
-    const flights = connectionsMapper.mapToConnections(await scraper.scrapeAll())
-    console.log("Flights scraped")
-    await Connection.create(flights)
-    console.log("FLights saved")
-    await Update.deleteOne({fromCountry: fromCountry, fromCity: fromCity, toCountry: toCountry, toCity: toCity}).exec()
-    console.log("Update deleted")
-    const update = new Update({
-        fromCity: fromCity,
-        fromCountry: fromCountry,
-        toCity: toCity,
-        toCountry: toCountry,
-        lastUpdate: Date.now()
-    })
-    await update.save()
-    console.log("Update saved")
-}
-
-async function searchFromTo(from, to) {
-    return {
-        fromCity: "Warsaw",
-        fromCountry: "Poland",
-        toCity: "London",
-        toCountry: "United Kingdom"
-    }
-}
 
 async function getConnections(from, to, maxDurationMinutes, minDepartureTime, maxDepartureTime, minArrivalTime, maxArrivalTime) {
     validateParams(from, to, maxDurationMinutes, minDepartureTime, maxDepartureTime, minArrivalTime, maxArrivalTime)
     const fromToData = await searchFromTo(from, to)
-    const update = await Update.findOne(fromToData).exec()
+    const update = await Update.findOne({
+        fromCity: fromToData.fromCity,
+        fromCountry: fromToData.fromCountry,
+        toCity: fromToData.toCity,
+        toCountry: fromToData.toCountry
+    }).exec()
     if (update === null || (Date.now() - update.lastUpdate) > DATA_TTL_MILLISECONDS) {
         console.log("Updating connections")
-        await renewConnections(fromToData.fromCountry, fromToData.fromCity, fromToData.toCountry, fromToData.toCity)
+        await renewConnections(fromToData)
         console.log("Connections updated")
     }
     const filters = buildFilters(fromToData, maxDurationMinutes, minDepartureTime, maxDepartureTime, minArrivalTime, maxArrivalTime)
@@ -93,6 +65,68 @@ function validateTimeString(timeString, propertyName) {
     }
 }
 
+async function searchFromTo(from, to) {
+    const fromObjects = await searchPhrase(from)
+    if (fromObjects.length === 0) {
+        throw new Error(from + " location not found")
+    }
+    const toObjects = await searchPhrase(to)
+    if (toObjects.length === 0) {
+        throw new Error(to + " location not found")
+    }
+    const fromObject = fromObjects[0]
+    const toObject = toObjects[0]
+    const url = buildUrl(fromObject, toObject)
+    return {
+        fromCity: fromObject.cityName,
+        fromCountry: fromObject.countryName,
+        toCity: toObject.cityName,
+        toCountry: toObject.countryName,
+        url: url
+    }
+}
+
+async function searchPhrase(phrase) {
+    const url = "https://srv.wego.com/places/search?language=en&min_airports=1&site_code=US&query=" + phrase
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Host': 'srv.wego.com'
+        }
+    })
+    return response.json()
+}
+
+function buildUrl(fromObject, toObject) {
+    return "https://www.wego.com/schedules/" + fromObject.cityCode.toLowerCase() + "/" + toObject.cityCode.toLowerCase() + "/cheapest-flights-from-"
+        + fromObject.cityPermalink + "-to-" + toObject.cityPermalink
+}
+
+async function renewConnections(fromToData) {
+    await Connection.deleteMany({
+        fromCountry: fromToData.fromCountry,
+        fromCity: fromToData.fromCity,
+        toCountry: fromToData.toCountry,
+        toCity: fromToData.toCity
+    }).exec()
+    const flights = connectionsMapper.mapToConnections(await scraper.scrapeAll(fromToData.url))
+    await Connection.create(flights)
+    await Update.deleteOne({
+        fromCountry: fromToData.fromCountry,
+        fromCity: fromToData.fromCity,
+        toCountry: fromToData.toCountry,
+        toCity: fromToData.toCity
+    }).exec()
+    const update = new Update({
+        fromCity: fromToData.fromCity,
+        fromCountry: fromToData.fromCountry,
+        toCity: fromToData.toCity,
+        toCountry: fromToData.toCountry,
+        lastUpdate: Date.now()
+    })
+    await update.save()
+}
+
 function buildFilters(fromToData, maxDurationMinutes, minDepartureTime, maxDepartureTime, minArrivalTime, maxArrivalTime) {
     const filters = {
         fromCity: fromToData.fromCity,
@@ -127,4 +161,4 @@ function buildFilters(fromToData, maxDurationMinutes, minDepartureTime, maxDepar
     return filters
 }
 
-module.exports = {renewConnections, getConnections}
+module.exports = {getConnections}
