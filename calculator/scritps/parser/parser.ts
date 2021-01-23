@@ -1,11 +1,11 @@
-import {Node} from "../node/node";
-import {ProcessingResult} from "./processingResult";
-import {NumberNode} from "../node/numberNode";
-import {BinaryOperatorNode} from "../node/binaryOperatorNode";
-import {MultiplyOperatorNode} from "../node/multiplyOperatorNode";
-import {DivideOperatorNode} from "../node/divideOperatorNode";
-import {PlusOperatorNode} from "../node/plusOperatorNode";
-import {MinusOperatorNode} from "../node/minusOperatorNode";
+import {Node} from "../node/node.js";
+import {ProcessingResult} from "./processingResult.js";
+import {NumberNode} from "../node/numberNode.js";
+import {BinaryOperatorNode} from "../node/binaryOperatorNode.js";
+import {MultiplyOperatorNode} from "../node/multiplyOperatorNode.js";
+import {DivideOperatorNode} from "../node/divideOperatorNode.js";
+import {PlusOperatorNode} from "../node/plusOperatorNode.js";
+import {MinusOperatorNode} from "../node/minusOperatorNode.js";
 
 export class Parser {
 
@@ -20,7 +20,8 @@ export class Parser {
     }
 
     public parse() : number {
-        return Parser.makeNode(this.expression).compute();
+        let result = Parser.makeNode(this.expression)
+        return result.compute()
     }
 
     private static makeNode(expression : string) : Node {
@@ -95,7 +96,9 @@ export class Parser {
         let results : ProcessingResult[] = []
         let builder = ""
         let numberInProgress = false
+        // @ts-ignore
         for (let i = 0; i < value.length; i++) {
+            // @ts-ignore
             let currentChar = value.charAt(i)
             if (numberInProgress) {
                 if (Parser.NUMBER_CHARACTERS.indexOf(currentChar) < 0) {
@@ -153,7 +156,9 @@ export class Parser {
         if (item.isNotInterpreted()) {
             let results : ProcessingResult[] = []
             let value = item.getValue()
+            // @ts-ignore
             for (let i = 0; i < value.length; i++) {
+                // @ts-ignore
                 results.push(ProcessingResult.operator(value.charAt(i)))
             }
             return results
@@ -191,6 +196,7 @@ export class Parser {
             const third = Parser.processResultsForOperator(second, "+")
             const fourth = Parser.processResultsForOperator(third, "-")
             if (fourth.length == 1 && fourth[0].isNode()) {
+                // @ts-ignore
                 return fourth[0].getNode()
             } else {
                 throw new Error("Final processing result is incorrect")
@@ -209,12 +215,13 @@ export class Parser {
                 index += 2
             } else {
                 let leftIndex = index - 1
-                let rightIndex = index + 2
+                let rightIndex = index + 1
                 let processedOperator = Parser.mapToOperatorNodeResult(elements[leftIndex], operatorResult, elements[rightIndex])
                 let processedList = Parser.mapListFromTo(elements, leftIndex, rightIndex, processedOperator)
                 return Parser.processResultsForOperator(processedList, operator)
             }
         }
+        return elements
     }
 
     private static mapListFromTo(elements : ProcessingResult[], leftIndex : number, rightIndex : number, between : ProcessingResult) : ProcessingResult[] {
@@ -239,16 +246,20 @@ export class Parser {
         }
         let leftNode = Parser.mapToNode(left)
         let rightNode = Parser.mapToNode(right)
+        // @ts-ignore
         let operatorNode = Parser.makeBinaryOperatorNode(leftNode, operator.getValue(), rightNode)
         return ProcessingResult.node(operatorNode)
     }
 
     private static mapToNode(result : ProcessingResult) : Node {
         if (result.isNode()) {
+            // @ts-ignore
             return result.getNode()
         } else if (result.isNumber()) {
+            // @ts-ignore
             return new NumberNode(result.getValue())
         } else if (result.isExpression()) {
+            // @ts-ignore
             return Parser.makeNode(result.getValue())
         } else {
             throw new Error("Cannot create node result")

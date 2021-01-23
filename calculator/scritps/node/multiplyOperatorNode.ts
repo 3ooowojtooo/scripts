@@ -1,5 +1,5 @@
-import {BinaryOperatorNode} from "./binaryOperatorNode";
-import {Node} from "./node";
+import {BinaryOperatorNode} from "./binaryOperatorNode.js";
+import {Node} from "./node.js";
 
 export class MultiplyOperatorNode extends BinaryOperatorNode {
 

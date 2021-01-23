@@ -1,4 +1,4 @@
-import {Node} from "./node";
+import {Node} from "./node.js";
 
 export class NumberNode extends Node {
 
@@ -10,6 +10,6 @@ export class NumberNode extends Node {
     }
 
     compute(): number {
-        return 0;
+        return this.value;
     }
 }

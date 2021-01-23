@@ -1,33 +1,32 @@
-"use strict";
-exports.__esModule = true;
-var processingResult_1 = require("./processingResult");
-var numberNode_1 = require("../node/numberNode");
-var multiplyOperatorNode_1 = require("../node/multiplyOperatorNode");
-var divideOperatorNode_1 = require("../node/divideOperatorNode");
-var plusOperatorNode_1 = require("../node/plusOperatorNode");
-var minusOperatorNode_1 = require("../node/minusOperatorNode");
-var Parser = /** @class */ (function () {
-    function Parser(expression) {
+import { ProcessingResult } from "./processingResult.js";
+import { NumberNode } from "../node/numberNode.js";
+import { MultiplyOperatorNode } from "../node/multiplyOperatorNode.js";
+import { DivideOperatorNode } from "../node/divideOperatorNode.js";
+import { PlusOperatorNode } from "../node/plusOperatorNode.js";
+import { MinusOperatorNode } from "../node/minusOperatorNode.js";
+export class Parser {
+    constructor(expression) {
         this.expression = expression.replace(" ", "");
     }
-    Parser.prototype.parse = function () {
-        return Parser.makeNode(this.expression).compute();
-    };
-    Parser.makeNode = function (expression) {
-        var brackets = Parser.makeBrackets(expression);
-        var bracketsAndNumbers = Parser.makeNumbers(brackets);
-        var bracketsAndAllNumbers = Parser.makeNegativeNumbers(bracketsAndNumbers);
-        var operators = Parser.makeOperators(bracketsAndAllNumbers);
+    parse() {
+        let result = Parser.makeNode(this.expression);
+        return result.compute();
+    }
+    static makeNode(expression) {
+        let brackets = Parser.makeBrackets(expression);
+        let bracketsAndNumbers = Parser.makeNumbers(brackets);
+        let bracketsAndAllNumbers = Parser.makeNegativeNumbers(bracketsAndNumbers);
+        let operators = Parser.makeOperators(bracketsAndAllNumbers);
         Parser.validate(operators);
         return Parser.buildNode(operators);
-    };
-    Parser.makeBrackets = function (expression) {
-        var results = [];
-        var builder = "";
-        var expressionInProgress = false;
-        var expressionDepth = 1;
-        for (var i = 0; i < expression.length; i++) {
-            var currentChar = expression.charAt(i);
+    }
+    static makeBrackets(expression) {
+        let results = [];
+        let builder = "";
+        let expressionInProgress = false;
+        let expressionDepth = 1;
+        for (let i = 0; i < expression.length; i++) {
+            let currentChar = expression.charAt(i);
             if (expressionInProgress) {
                 if (currentChar == Parser.OPEN_BRACKET) {
                     expressionDepth++;
@@ -36,7 +35,7 @@ var Parser = /** @class */ (function () {
                 else if (currentChar == Parser.CLOSE_BRACKET) {
                     if (expressionDepth == 1) {
                         if (builder.length > 0) {
-                            results.push(processingResult_1.ProcessingResult.expression(builder));
+                            results.push(ProcessingResult.expression(builder));
                             builder = "";
                         }
                         expressionInProgress = false;
@@ -53,7 +52,7 @@ var Parser = /** @class */ (function () {
             else {
                 if (currentChar == Parser.OPEN_BRACKET) {
                     if (builder.length > 0) {
-                        results.push(processingResult_1.ProcessingResult.notInterpreted(builder));
+                        results.push(ProcessingResult.notInterpreted(builder));
                         builder = "";
                     }
                     expressionInProgress = true;
@@ -67,39 +66,41 @@ var Parser = /** @class */ (function () {
             throw new Error("Bracket not closed");
         }
         if (builder.length > 0) {
-            results.push(processingResult_1.ProcessingResult.notInterpreted(builder));
+            results.push(ProcessingResult.notInterpreted(builder));
         }
         return results;
-    };
-    Parser.makeNumbers = function (results) {
-        var numbers = [];
-        results.forEach(function (val) {
-            var split = Parser.splitIntoNumbers(val);
-            split.forEach(function (splitVal) { return numbers.push(splitVal); });
+    }
+    static makeNumbers(results) {
+        let numbers = [];
+        results.forEach(val => {
+            const split = Parser.splitIntoNumbers(val);
+            split.forEach(splitVal => numbers.push(splitVal));
         });
         return numbers;
-    };
-    Parser.splitIntoNumbers = function (item) {
+    }
+    static splitIntoNumbers(item) {
         if (item.isExpression()) {
             return [item];
         }
-        var value = item.getValue();
-        var results = [];
-        var builder = "";
-        var numberInProgress = false;
-        for (var i = 0; i < value.length; i++) {
-            var currentChar = value.charAt(i);
+        let value = item.getValue();
+        let results = [];
+        let builder = "";
+        let numberInProgress = false;
+        // @ts-ignore
+        for (let i = 0; i < value.length; i++) {
+            // @ts-ignore
+            let currentChar = value.charAt(i);
             if (numberInProgress) {
                 if (Parser.NUMBER_CHARACTERS.indexOf(currentChar) < 0) {
                     numberInProgress = false;
-                    results.push(processingResult_1.ProcessingResult.number(builder));
+                    results.push(ProcessingResult.number(builder));
                     builder = "";
                 }
             }
             else {
                 if (Parser.NUMBER_CHARACTERS.indexOf(currentChar) > -1) {
                     numberInProgress = true;
-                    results.push(processingResult_1.ProcessingResult.notInterpreted(builder));
+                    results.push(ProcessingResult.notInterpreted(builder));
                     builder = "";
                 }
             }
@@ -107,59 +108,61 @@ var Parser = /** @class */ (function () {
         }
         if (builder.length > 0) {
             if (numberInProgress) {
-                results.push(processingResult_1.ProcessingResult.number(builder));
+                results.push(ProcessingResult.number(builder));
             }
             else {
-                results.push(processingResult_1.ProcessingResult.notInterpreted(builder));
+                results.push(ProcessingResult.notInterpreted(builder));
             }
         }
         return results;
-    };
-    Parser.makeNegativeNumbers = function (items) {
+    }
+    static makeNegativeNumbers(items) {
         if (items.length < 2) {
             return items;
         }
-        var firstResult = items[0];
-        var secondResult = items[1];
+        let firstResult = items[0];
+        let secondResult = items[1];
         if (firstResult.getValue() == "-" && secondResult.isNumber()) {
-            var results = [];
-            var negativeNumber = processingResult_1.ProcessingResult.number("-" + secondResult.getValue());
+            let results = [];
+            let negativeNumber = ProcessingResult.number("-" + secondResult.getValue());
             results.push(negativeNumber);
-            for (var i = 2; i < items.length; i++) {
+            for (let i = 2; i < items.length; i++) {
                 results.push(items[i]);
             }
             return results;
         }
         return items;
-    };
-    Parser.makeOperators = function (results) {
-        var operators = [];
-        results.forEach(function (val) {
-            var split = Parser.splitIntoOperators(val);
-            split.forEach(function (splitVal) { return operators.push(splitVal); });
+    }
+    static makeOperators(results) {
+        let operators = [];
+        results.forEach(val => {
+            const split = Parser.splitIntoOperators(val);
+            split.forEach(splitVal => operators.push(splitVal));
         });
         return operators;
-    };
-    Parser.splitIntoOperators = function (item) {
+    }
+    static splitIntoOperators(item) {
         if (item.isNotInterpreted()) {
-            var results = [];
-            var value = item.getValue();
-            for (var i = 0; i < value.length; i++) {
-                results.push(processingResult_1.ProcessingResult.operator(value.charAt(i)));
+            let results = [];
+            let value = item.getValue();
+            // @ts-ignore
+            for (let i = 0; i < value.length; i++) {
+                // @ts-ignore
+                results.push(ProcessingResult.operator(value.charAt(i)));
             }
             return results;
         }
         return [item];
-    };
-    Parser.validate = function (results) {
+    }
+    static validate(results) {
         if (results.length == 0) {
             throw new Error("Empty expression");
         }
         if (results.length % 2 == 0) {
             throw new Error("Some operator does not have arguments");
         }
-        for (var i = 0; i < results.length; i++) {
-            var current = results[i];
+        for (let i = 0; i < results.length; i++) {
+            let current = results[i];
             if (i % 2 == 0 && !(current.isExpression() || current.isNumber())) {
                 throw new Error("Incorrect expressions and operators order");
             }
@@ -170,8 +173,8 @@ var Parser = /** @class */ (function () {
                 throw new Error("Incorrect characters in expression");
             }
         }
-    };
-    Parser.buildNode = function (results) {
+    }
+    static buildNode(results) {
         if (results.length == 0) {
             throw new Error("Cannot build Node from empty results");
         }
@@ -179,92 +182,96 @@ var Parser = /** @class */ (function () {
             return Parser.mapToNode(results[0]);
         }
         else {
-            var first = Parser.processResultsForOperator(results, "*");
-            var second = Parser.processResultsForOperator(first, "/");
-            var third = Parser.processResultsForOperator(second, "+");
-            var fourth = Parser.processResultsForOperator(third, "-");
+            const first = Parser.processResultsForOperator(results, "*");
+            const second = Parser.processResultsForOperator(first, "/");
+            const third = Parser.processResultsForOperator(second, "+");
+            const fourth = Parser.processResultsForOperator(third, "-");
             if (fourth.length == 1 && fourth[0].isNode()) {
+                // @ts-ignore
                 return fourth[0].getNode();
             }
             else {
                 throw new Error("Final processing result is incorrect");
             }
         }
-    };
-    Parser.processResultsForOperator = function (elements, operator) {
+    }
+    static processResultsForOperator(elements, operator) {
         if (elements.length == 1) {
             return elements;
         }
-        var index = 1;
+        let index = 1;
         while (index < elements.length) {
-            var operatorResult = elements[index];
+            let operatorResult = elements[index];
             if (operatorResult.getValue() != operator) {
                 index += 2;
             }
             else {
-                var leftIndex = index - 1;
-                var rightIndex = index + 2;
-                var processedOperator = Parser.mapToOperatorNodeResult(elements[leftIndex], operatorResult, elements[rightIndex]);
-                var processedList = Parser.mapListFromTo(elements, leftIndex, rightIndex, processedOperator);
+                let leftIndex = index - 1;
+                let rightIndex = index + 1;
+                let processedOperator = Parser.mapToOperatorNodeResult(elements[leftIndex], operatorResult, elements[rightIndex]);
+                let processedList = Parser.mapListFromTo(elements, leftIndex, rightIndex, processedOperator);
                 return Parser.processResultsForOperator(processedList, operator);
             }
         }
-    };
-    Parser.mapListFromTo = function (elements, leftIndex, rightIndex, between) {
-        var result = [];
+        return elements;
+    }
+    static mapListFromTo(elements, leftIndex, rightIndex, between) {
+        let result = [];
         if (leftIndex > 0) {
-            for (var i = 0; i < leftIndex; i++) {
+            for (let i = 0; i < leftIndex; i++) {
                 result.push(elements[i]);
             }
         }
         result.push(between);
         if (rightIndex < (elements.length - 1)) {
-            for (var i = (rightIndex + 1); i < elements.length; i++) {
+            for (let i = (rightIndex + 1); i < elements.length; i++) {
                 result.push(elements[i]);
             }
         }
         return result;
-    };
-    Parser.mapToOperatorNodeResult = function (left, operator, right) {
+    }
+    static mapToOperatorNodeResult(left, operator, right) {
         if (!operator.isOperator() || left.isNotInterpreted() || left.isOperator() || right.isNotInterpreted() || right.isOperator()) {
             throw new Error("Cannot create operator");
         }
-        var leftNode = Parser.mapToNode(left);
-        var rightNode = Parser.mapToNode(right);
-        var operatorNode = Parser.makeBinaryOperatorNode(leftNode, operator.getValue(), rightNode);
-        return processingResult_1.ProcessingResult.node(operatorNode);
-    };
-    Parser.mapToNode = function (result) {
+        let leftNode = Parser.mapToNode(left);
+        let rightNode = Parser.mapToNode(right);
+        // @ts-ignore
+        let operatorNode = Parser.makeBinaryOperatorNode(leftNode, operator.getValue(), rightNode);
+        return ProcessingResult.node(operatorNode);
+    }
+    static mapToNode(result) {
         if (result.isNode()) {
+            // @ts-ignore
             return result.getNode();
         }
         else if (result.isNumber()) {
-            return new numberNode_1.NumberNode(result.getValue());
+            // @ts-ignore
+            return new NumberNode(result.getValue());
         }
         else if (result.isExpression()) {
+            // @ts-ignore
             return Parser.makeNode(result.getValue());
         }
         else {
             throw new Error("Cannot create node result");
         }
-    };
-    Parser.makeBinaryOperatorNode = function (left, operator, right) {
+    }
+    static makeBinaryOperatorNode(left, operator, right) {
         switch (operator) {
             case "*":
-                return new multiplyOperatorNode_1.MultiplyOperatorNode(left, right);
+                return new MultiplyOperatorNode(left, right);
             case "/":
-                return new divideOperatorNode_1.DivideOperatorNode(left, right);
+                return new DivideOperatorNode(left, right);
             case "+":
-                return new plusOperatorNode_1.PlusOperatorNode(left, right);
+                return new PlusOperatorNode(left, right);
             case "-":
-                return new minusOperatorNode_1.MinusOperatorNode(left, right);
+                return new MinusOperatorNode(left, right);
             default:
                 throw new Error(operator + " is not valid operator character");
         }
-    };
-    Parser.OPEN_BRACKET = "(";
-    Parser.CLOSE_BRACKET = ")";
-    Parser.NUMBER_CHARACTERS = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-    return Parser;
-}());
-exports.Parser = Parser;
+    }
+}
+Parser.OPEN_BRACKET = "(";
+Parser.CLOSE_BRACKET = ")";
+Parser.NUMBER_CHARACTERS = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];

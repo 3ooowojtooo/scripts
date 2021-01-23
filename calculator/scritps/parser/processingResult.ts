@@ -1,15 +1,15 @@
-import {Node} from "../node/node";
-import {ProcessingResultType} from "./processingResultType";
+import {Node} from "../node/node.js";
+import {ProcessingResultType} from "./processingResultType.js";
 
 export class ProcessingResult {
 
     private static readonly OPERATORS : string[] = ["+", "-", "*", "/"];
 
-    private readonly value : string;
-    private readonly node : Node;
+    private readonly value : string | null;
+    private readonly node : Node | null;
     private readonly type : ProcessingResultType;
 
-    private constructor(value : string, node : Node, type : ProcessingResultType) {
+    private constructor(value : string | null, node : Node | null, type : ProcessingResultType) {
         this.value = value;
         this.node = node;
         this.type = type
@@ -35,11 +35,11 @@ export class ProcessingResult {
         return this.type == ProcessingResultType.NODE;
     }
 
-    public getValue() : string {
+    public getValue() : string | null {
         return this.value;
     }
 
-    public getNode() : Node {
+    public getNode() : Node | null {
         return this.node;
     }
 
@@ -53,9 +53,9 @@ export class ProcessingResult {
 
     public static number(value : string) : ProcessingResult {
         if (value.length == 0 || value.charAt(0) == "." || value.charAt(value.length - 1) == ".") {
-            return new ProcessingResult(value, null, ProcessingResultType.NUMBER);
+            throw new Error("Incorrect number: " + value);
         }
-        throw new Error("Incorrect number: " + value);
+        return new ProcessingResult(value, null, ProcessingResultType.NUMBER);
     }
 
     public static operator(value : string) : ProcessingResult {

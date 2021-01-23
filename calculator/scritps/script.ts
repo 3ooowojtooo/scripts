@@ -1,4 +1,4 @@
-import {Parser} from "./parser/parser";
+import {Parser} from "./parser/parser.js";
 
 const numberButtons = document.querySelectorAll('[data-number]')
 const operationButtons = document.querySelectorAll('[data-operation]')
