@@ -16,7 +16,7 @@ export class Parser {
     private readonly expression : string;
 
     public constructor(expression : string) {
-        this.expression = expression.replace(" ", "");
+        this.expression = expression.replace(/\s/g, "");
     }
 
     public parse() : number {

@@ -6,7 +6,7 @@ import { PlusOperatorNode } from "../node/plusOperatorNode.js";
 import { MinusOperatorNode } from "../node/minusOperatorNode.js";
 export class Parser {
     constructor(expression) {
-        this.expression = expression.replace(" ", "");
+        this.expression = expression.replace(/\s/g, "");
     }
     parse() {
         let result = Parser.makeNode(this.expression);
